@@ -13,3 +13,4 @@ Add coco-toolchain/\<version> as tool_requires to your conanfile where version c
 * Native
 * nRF52
 * STM32F0
+* STM32G4
