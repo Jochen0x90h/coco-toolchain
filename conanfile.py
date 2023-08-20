@@ -23,6 +23,8 @@ class Project(ConanFile):
            return 'nrf52'
         if p.startswith('stm32f0'):
            return 'stm32f0'
+        if p.startswith('stm32g4'):
+           return 'stm32g4'
 
     def isArm(self):
         t = self.getType()
