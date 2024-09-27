@@ -26,7 +26,7 @@ set(CXX_FLAGS "${C_FLAGS} -fno-rtti -fno-use-cxa-atexit")
 # let linker dump unused sections, use newlib in nano version, add standard libs at end so that their symbols get found
 # https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware
 # use target_link_directories to let the linker find link.ld
-set(LINKER_FLAGS "-Wl,--gc-sections -Wl,--undefined=SystemInit -specs=nano.specs -specs=nosys.specs -Tlink.ld")
+set(LINKER_FLAGS "-Wl,--gc-sections -Wl,--undefined=SystemInit -specs=nano.specs -specs=nosys.specs")
 
 # set flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CPU_FLAGS} ${FPU_FLAGS} ${C_FLAGS}")

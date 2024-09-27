@@ -1,6 +1,7 @@
 import os
-from conans import ConanFile, tools
-from conan.tools.files import save
+from conan import ConanFile
+from conan.tools.files import save, load, copy
+from conan.tools.cmake import CMake
 
 
 class Project(ConanFile):
@@ -15,22 +16,17 @@ class Project(ConanFile):
     exports_sources = "conanfile.py", "cmake/*"
 
 
+    # get type (native or family of MCUs, default is native)
     def getType(self):
         p = str(self.options.platform);
-        if p == 'None' or p == 'native' or p == 'emu':
-           return 'native'
-        if p.startswith('nrf52'):
-           return 'nrf52'
-        if p.startswith('stm32f0'):
-           return 'stm32f0'
-        if p.startswith('stm32g4'):
-           return 'stm32g4'
-
-    def isArm(self):
-        t = self.getType()
-        return t == 'nrf52' or t.startswith('stm32')
+        types = ['nrf52', 'nrf54', 'stm32f0', 'stm32f3', 'stm32f4', 'stm32c0', 'stm32g4']
+        for t in types:
+            if p.startswith(t):
+               return t;
+        return 'native'
 
     def build(self):
+        # generate variables.cmake (gets added as additional custom cmake toolchain file)
         # https://docs.conan.io/1/reference/conanfile/tools/files/basic.html#conan-tools-files-save
         platform = str(self.options.platform)
         content = f"set(PLATFORM \"{platform}\")"
@@ -38,31 +34,17 @@ class Project(ConanFile):
 
     def package(self):
         # install user toolchain from build directory into package directory
-        self.copy("*", src=os.path.join("cmake", self.getType()), dst="cmake/coco")
-        self.copy("*", src="cmake/generated", dst="cmake/coco")
+        copy(self, pattern="*", src=os.path.join("cmake", self.getType()), dst=os.path.join(self.package_folder, "cmake/coco"))
+        copy(self, pattern="*", src="cmake/generated", dst=os.path.join(self.package_folder, "cmake/coco"))
 
     def package_info(self):
         # https://docs.conan.io/1/systems_cross_building/cross_building.html#conan-v1-24-and-newer
         # https://docs.conan.io/1/reference/conanfile/tools/cmake/cmaketoolchain.html#conf
 
-        # export platform
-        #self.user_info.platform = self.options.platform
-
-        # add custom cmake toolchains
+        # add custom cmake toolchain files
         t = os.path.join(self.package_folder, "cmake/coco/toolchain.cmake")
         v = os.path.join(self.package_folder, "cmake/coco/variables.cmake")
         self.conf_info.define("tools.cmake.cmaketoolchain:user_toolchain", [t, v])
-
-        if self.isArm():
-            # set compiler executables
-            executables = {}
-            cc = self.env.get("ARM_CC", None)
-            if cc != None:
-                executables['c'] = cc
-            cxx = self.env.get("ARM_CXX", None)
-            if cxx != None:
-                executables['cpp'] = cxx
-            self.conf_info.define("tools.build:compiler_executables", executables)
 
         # compiler dependent flags
         settings_target = getattr(self, 'settings_target', None)
@@ -71,5 +53,5 @@ class Project(ConanFile):
                 self.conf_info.define("tools.build:cxxflags", ["-fcoroutines", "-fconcepts", "-Wno-literal-suffix"])
             if settings_target.compiler == "clang":
                 self.conf_info.define("tools.build:cxxflags", ["-fcoroutines-ts", "-Wno-user-defined-literals"])
-            if settings_target.compiler == "Visual Studio":
+            if settings_target.compiler == "msvc":
                 self.conf_info.define("tools.build:cxxflags", ["/wd4455"])

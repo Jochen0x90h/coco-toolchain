@@ -10,7 +10,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE "ONLY")
 set(GENERATE_HEX "arm-none-eabi-objcopy -O ihex")
 
 
-add_compile_definitions(STM32 STM32G4)
+add_compile_definitions(STM32 STM32F4)
 
 # cpu/fpu flags
 set(CPU_FLAGS "-mcpu=cortex-m4 -mthumb -mabi=aapcs")
