@@ -10,7 +10,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE "ONLY")
 set(GENERATE_HEX "arm-none-eabi-objcopy -O ihex")
 
 
-add_compile_definitions(STM32F0)
+add_compile_definitions(STM32 STM32F0)
 
 # cpu/fpu flags
 set(CPU_FLAGS "-mcpu=cortex-m0 -mthumb -mabi=aapcs")
@@ -18,15 +18,15 @@ set(FPU_FLAGS "-mfloat-abi=soft")
 
 # c/c++ flags
 # keep every function in a separate section, this allows linker to discard unused ones
-set(C_FLAGS "-D__STACK_SIZE=8192 -D__HEAP_SIZE=8192 -fshort-enums -fno-exceptions -fdata-sections -ffunction-sections -Wall")
+set(C_FLAGS "-D__STACK_SIZE=8192 -D__HEAP_SIZE=8192 -fshort-enums -fdata-sections -ffunction-sections -Wall")
 #-fno-builtin
-set(CXX_FLAGS "${C_FLAGS} -fno-rtti -fno-use-cxa-atexit")
+set(CXX_FLAGS "${C_FLAGS} -fno-rtti -fno-exceptions -fno-use-cxa-atexit")
 
 # linker flags
 # let linker dump unused sections, use newlib in nano version, add standard libs at end so that their symbols get found
 # https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware
 # use target_link_directories to let the linker find link.ld
-set(LINKER_FLAGS "-Wl,--gc-sections -Wl,--undefined=SystemInit -specs=nano.specs -specs=nosys.specs -Tlink.ld")
+set(LINKER_FLAGS "-Wl,--gc-sections -Wl,--undefined=SystemInit -specs=nano.specs -specs=nosys.specs")
 
 # set flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CPU_FLAGS} ${FPU_FLAGS} ${C_FLAGS}")

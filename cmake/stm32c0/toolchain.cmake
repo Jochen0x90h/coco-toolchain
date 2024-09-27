@@ -1,5 +1,5 @@
 set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR armv7)
+set(CMAKE_SYSTEM_PROCESSOR armv6)
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
@@ -10,11 +10,11 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE "ONLY")
 set(GENERATE_HEX "arm-none-eabi-objcopy -O ihex")
 
 
-add_compile_definitions(STM32 STM32G4)
+add_compile_definitions(STM32 STM32C0)
 
 # cpu/fpu flags
-set(CPU_FLAGS "-mcpu=cortex-m4 -mthumb -mabi=aapcs")
-set(FPU_FLAGS "-mfpu=fpv4-sp-d16 -mfloat-abi=hard")
+set(CPU_FLAGS "-mcpu=cortex-m0plus -mthumb -mabi=aapcs")
+set(FPU_FLAGS "-mfloat-abi=soft")
 
 # c/c++ flags
 # keep every function in a separate section, this allows linker to discard unused ones
