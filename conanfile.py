@@ -19,7 +19,15 @@ class Project(ConanFile):
     # get type (native or family of MCUs, default is native)
     def getType(self):
         p = str(self.options.platform);
-        types = ['nrf52', 'nrf54', 'stm32f0', 'stm32f3', 'stm32f4', 'stm32c0', 'stm32g4']
+        types = [
+              'nrf52', # Cortex-M4F
+              'nrf54', # Cortex-M33F
+              'stm32f0', # Cortex-M0
+              'stm32l0', 'stm32c0', 'stm32g0', # Cortex-M0+
+              'stm32f1', 'stm32l1', # Cortex-M3
+              'stm32f3', 'stm32f4', 'stm32l4', 'stm32g4', # Cortex-M4F
+              'stm32h5', 'stm32u3', 'stm32u5' # Cortex-M33F
+        ]
         for t in types:
             if p.startswith(t):
                return t;
@@ -54,4 +62,4 @@ class Project(ConanFile):
             if settings_target.compiler == "clang":
                 self.conf_info.define("tools.build:cxxflags", ["-fcoroutines-ts", "-Wno-user-defined-literals"])
             if settings_target.compiler == "msvc":
-                self.conf_info.define("tools.build:cxxflags", ["/wd4455"])
+                self.conf_info.define("tools.build:cxxflags", ["/wd4455", "/Zc:__cplusplus"])
