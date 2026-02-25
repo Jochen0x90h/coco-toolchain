@@ -62,4 +62,4 @@ class Project(ConanFile):
             if settings_target.compiler == "clang":
                 self.conf_info.define("tools.build:cxxflags", ["-fcoroutines-ts", "-Wno-user-defined-literals"])
             if settings_target.compiler == "msvc":
-                self.conf_info.define("tools.build:cxxflags", ["/wd4455", "/Zc:__cplusplus"])
+                self.conf_info.define("tools.build:cxxflags", ["/wd4455", "/Zc:__cplusplus", "/utf-8"])
